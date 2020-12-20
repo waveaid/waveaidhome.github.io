@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WaveAid - Eyes to the world around you.</title>
+        
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-storage.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-analytics.js"></script>
+        <script src="js/config.js"></script>
+        
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/css/uikit.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit-icons.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+        <script src="js/file_list.js"></script>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+   
+    <style>
+        .font-set{
+            font-family: "Product Sans";
+        }
+
+        .sel_style{
+            font-family: "Product Sans";
+            font-size: 12px;
+            text-align: center;
+        }
+
+        #gallery-photo-add{
+            display:none;
+        }
+
+        .labelforfile{
+            border-radius: 5px;
+            font-family: "Product Sans";
+            background-color: #0883ff;
+            width: 80px;
+            height: 50px;
+            font-size: 25px;
+            color: white;
+            padding: 10px;
+        }
+
+        #getmp3{
+            display: none;
+        }
+
+        #audioDesign{
+            display: none;
+        }
+
+        .audioButton{
+            width: 400px;
+            height:400px;
+            border-radius: 50%;
+            background-color: rgb(44, 37, 37);
+            border: 0px;
+        }
+
+    </style>
+
+    </head>
+    <body>
+        <div>
+            <div class="uk-card uk-card-primary uk-card-body uk-animation-fade" style="height: 20%;">
+                <img src="images/waveaid.png" height="70px" width="70px">&nbsp;&nbsp;&nbsp;
+                <b><font face="Product Sans" style="color: white; font-size: 50px;">WaveAid</font></b>
+                <u><b><font face="Product Sans" style="color: white; font-size: 13px; padding-left: 30%;">About</font></b>
+                <b><font face="Product Sans" style="color: white; font-size: 13px; padding-left: 5em;">Mission</font></b>
+                <b><font face="Product Sans" style="color: white; font-size: 13px; padding-left: 5em;">Contact Us</font></b></u>
+            </div>
+        </div>
+        <!-- Starting the main conent and forms -->
+        <div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+            <div>
+                <div class="uk-card uk-card-primary uk-card-body uk-animation-slide-left-small">
+                    <img src="images/waveaid-concept.png"><br/>
+                    <table>
+                        <tr>
+                            <td><font face="Product Sans" style="font-size: 25px; color: white;">Becoming eyes for the blind.</font></td>
+                            <td><font face="Product Sans" style="font-size: 15px; color: white">We empower the blind people by converting the available Non-braille books and converting it to audio.</font></td>
+                        </tr>
+                    </table>
+                    
+                </div>
+            </div>
+            <div>
+                <div class="uk-background-secondary uk-padding uk-light uk-animation-slide-bottom-small">
+                    <table width="100%">
+                        <tr>
+                            <td><center><img src="images/waveaid-submit.png" width="60%"></center></td>
+                            <td><h3><font face="Product Sans" color="#0883FF"><b>Start helping others by building audiobooks for free!</b></font></h3>
+                                <font face="Product Sans" color="white"><b>Start contributing the page images of a book and help a blind child read it like us.</b></font></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <br/><center><hr color="white" width="70%"></center>
+                                <center><button class="uk-button uk-button-primary" type="button" uk-toggle="target: #modal-example" style="font-family: Product Sans; border-radius: 5px; background-color: #0883ff; color: white; font-style: bold; font-size: 20px;">Upload Files</button></center>
+                                <div id="modal-example" uk-modal>
+                                    <div class="uk-modal-dialog uk-modal-body">
+                                        <div class="uk-card uk-card-primary uk-card-body">
+                                            <div class="uk-grid-collapse uk-child-width-expand@s" uk-grid>
+                                                <div><font face="Product Sans" color="white" style="font-size: 15px;">Select directory to upload:</font>
+                                                </div>
+                                                <div id="bucket_list" class="sel_style">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <p><font face="Product Sans" style="font-size: 10px;"><b>*NOTE:</b> For any random image not belonging to a series of pages, you can drop it on <code>Random/</code> folder</font></p>
+                                        <center>
+                                            <hr color="black" width="70%">
+                                            <input type="file" accept="image/" id="gallery-photo-add" multiple>
+                                            <label for="gallery-photo-add" class="labelforfile">
+                                                <span class="material-icons">
+                                                    add_photo_alternate
+                                                </span> &nbsp;
+                                                Upload Photos
+                                            </label>
+                                            
+                                            <div id="previewImages" style="margin-top: 10px;">
+                                                <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider style="height: 30%;">
+                                                    <ul class="uk-slider-items uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m" id="appendImages"></ul>
+                                                    <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+                                                    <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slider-item="next"></a>
+                                                </div>
+                                                <button class="uk-button uk-button-secondary uk-width-1-2" type="button" id="getmp3" style="font-family: Product Sans; color: white; font-size: 20px; border-radius: 7px; margin-top: 10px;">Get Audio</button>
+                                                <table border="0" width="50%">
+                                                    <tr>
+                                                        <td><label id="upload_info" style="font-family: Product Sans; font-size: 12px;"><i>Uploading all images....</i></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td><div uk-spinner=0.5 id="spinner_load"></div></td>
+                                                        <td><span uk-icon="check" id="upload_success_icon"></span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><label id="audio_info" style="font-family: Product Sans; font-size: 12px;"><i>Fetchng audios...</i></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                                                        <td><div uk-spinner=0.5 id="spinner_load_audio"></div></td>
+                                                        <td><span uk-icon="check" id="fetch_success_icon"></span></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </center>
+
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </div>
+            </div>
+        </div>
+        
+        <center>
+            <div id="linkLabel"></div>
+            <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider="finite:true" style="width: 400px; margin-top: 120px;">
+
+                <ul class="uk-slider-items uk-child-width-1-1" id="appendAudio"></ul>
+            
+                <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+                <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slider-item="next"></a>
+            
+            </div>
+        </center>
+        <script src="js/image_upload.js"></script>
+    </body>  
+</html>

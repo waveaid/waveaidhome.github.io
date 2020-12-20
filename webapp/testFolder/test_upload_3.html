@@ -1,0 +1,118 @@
+<html>
+<head>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.1.1/firebase-analytics.js"></script>
+    <script src="js/config.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/css/uikit.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.9/dist/js/uikit-icons.min.js"></script>
+
+    <style>
+        #getmp3{
+            display:none;
+        }
+    </style>
+
+</head>
+<body>
+    <input type="file" multiple id="gallery-photo-add">
+    <div id="gallery">
+        <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider style="width: 50%; height: 40%;">
+            <ul class="uk-slider-items uk-child-width-1-2 uk-child-width-1-3@s uk-child-width-1-4@m" id="appendImages"></ul>
+            <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+            <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slider-item="next"></a>
+        </div>
+    </div>
+    <button class="uk-button uk-button-secondary uk-width-1-4" type="button" id="getmp3" style="font-family: Product Sans; color: white; font-size: 20px; border-radius: 7px;">Get Audio</button>
+    <table border="0">
+        <tr>
+            <td><label id="upload_info" style="font-family: Product Sans; font-size: 12px;"><i>Uploading all images</i></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td><div uk-spinner=0.5 id="spinner_load"></div></td>
+            <td><span uk-icon="check" id="upload_success_icon"></span></td>
+        </tr>
+    </table>
+
+
+    
+    
+    
+    
+    <script>
+        document.getElementById("getmp3").style.display = "none";
+        document.getElementById("upload_info").style.display = "none";
+        document.getElementById("spinner_load").style.display = "none";
+        document.getElementById("upload_success_icon").style.display = "none";
+        const fileHolder = document.getElementById('gallery-photo-add');
+        fileHolder.addEventListener('change', function(event) {
+            console.log(event.target.files.length);
+            var reader = new FileReader()
+            for(let i=0; i<event.target.files.length; i++){
+                var node = document.createElement('li');
+                node.id = "image_"+i.toString();
+                document.getElementById("appendImages").appendChild(node);
+            }
+            for(let i=0; i<event.target.files.length; i++){
+                var img = new Image()
+                img.src = URL.createObjectURL(event.target.files[i]);
+                img.width = "500";
+                img.height = "300";
+                document.getElementById("image_"+i).appendChild(img);
+            }
+            if (event.target.files.length > 0) {
+                document.getElementById("getmp3").style.display = "block";
+            }
+            
+            
+            document.getElementById("getmp3").addEventListener('click', function(){
+                counter=0;
+                for(let i=0; i<event.target.files.length; i++){
+                    let imageFiles = event.target.files[i];
+                    let storageRef = firebase.storage().ref("images/StartWithWhy/" + imageFiles.name);
+                    console.log("################################# ANOTHER FILE ON UPLOAD");
+                    let task = storageRef.put(imageFiles);
+                    task.on('state_changed', function progress(snapshot){
+                        let perc = snapshot.bytesTransferred/snapshot.totalBytes * 100;
+                        console.log("Uploading done => "+perc+"%");
+                        if(perc == 100.0){
+                            counter = counter+1;
+                        }
+                        if(counter == event.target.files.length){
+                            document.getElementById('spinner_load').style.display = 'none';
+                            document.getElementById('upload_info').innerHTML = 'Upload Successful';
+                            document.getElementById("upload_success_icon").style.display = "block";
+                        }else{
+                            document.getElementById('upload_info').style.display = 'block';
+                            document.getElementById('spinner_load').style.display = 'block';
+                            document.getElementById("upload_success_icon").style.display = "none";
+                        }
+                        switch (snapshot.state) {
+                            case firebase.storage.TaskState.PAUSED:
+                                console.log('UPLOAD PAUSED.');
+                                break;
+                            
+                            case firebase.storage.TaskState.RUNNING:
+                                console.log('UPLOAD RUNNING.');
+                                break;
+
+                            case firebase.storage.TaskState.RUNNING:
+                                console.log('UPLOAD RUNNING.');
+                                break;
+
+                            default:
+                                break;
+                        }
+                    });
+
+                }
+                
+                
+            });
+
+        });
+    </script>
+</body>
+</html>

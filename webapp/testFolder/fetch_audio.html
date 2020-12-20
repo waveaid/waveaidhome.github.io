@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/css/uikit.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/js/uikit.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/js/uikit-icons.min.js"></script>
+  <meta charset="utf-8">
+  <title>jQuery.getJSON demo</title>
+  <style>
+  img {
+    height: 100px;
+    float: left;
+  }
+  .audioDesign{
+    display: none;
+  }
+
+  .audioButton{
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background-color: rgb(0, 0, 0);
+    border: 0px;
+  }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+</head>
+<body>
+ 
+<div id="linkLabel"></div>
+<center>
+  <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider="finite:true" style="width: 400px; margin-top: 120px;">
+      <ul class="uk-slider-items uk-child-width-1-1" id="appendAudio"></ul>
+      <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+      <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slider-item="next"></a>
+  </div>
+</center>
+<!-- <table border="0">
+  <tr>
+      <td><label id="upload_info" style="font-family: Product Sans; font-size: 12px;"><i>Processing audios</i></label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      <td><div uk-spinner=0.5 id="spinner_load"></div></td>
+      <td><span uk-icon="check" id="upload_success_icon"></span></td>
+  </tr>
+</table> -->
+
+<script>
+  let imgList = ['poem','img2'];
+  let promiseList = [];
+  for (let index = 0; index < imgList.length; index++) {
+    audio = document.createElement('audio');
+    audio.class = "audioDesign";
+    audio.id = "audio_"+index;
+    audio.controls = "controls";
+    document.getElementById('linkLabel').appendChild(audio);
+    promise = fetch('http://127.0.0.1:5000/convert/Random/'+imgList[index]);
+    promiseList.push(promise);
+  }
+
+  Promise.all(promiseList).then(files => {
+    let i=0;
+    files.forEach(file => {
+      appendURL(file.json(), i, imgList.length);
+      i = i+1;
+    });
+  });
+
+  console.log()
+
+  let appendURL = (prom, ind, totAudio) => {
+    prom.then(data => {
+      srcElem = document.createElement('source');
+      srcElem.src = data['Link'];
+      srcElem.type = "audio/mpeg";
+      document.getElementById('audio_'+ind).appendChild(srcElem);
+      
+      sliderElem = document.createElement('li');
+      playButton = document.createElement('button');
+      playButton.style.width = '300px';
+      playButton.style.height = '300px';
+      playButton.style.borderRadius = '50%';
+      playButton.style.backgroundColor = 'gray';
+      spanElem = document.createElement('span');
+      spanElem.class = "uk-margin-small-right";
+      spanElem.style.color = "#0883ff";
+      spanElem.setAttribute('uk-icon',"icon:play-circle; ratio:3");
+      playButton.appendChild(spanElem);
+      audioref = document.getElementById("audio_"+ind);
+      seekb = document.createElement('input');
+      seekb.type = "range";
+      seekb.id =  "dur_"+ind;
+      seekb.step = "0.25";
+      seekb.style.width = "100%";
+      seekb.style.height = "4px";
+      seekb.setAttribute('onchange', 'mSet("dur_'+ind+'", "audio_'+ind+'")');
+      sliderElem.appendChild(playButton);
+      sliderElem.appendChild(seekb);
+      document.getElementById('appendAudio').appendChild(sliderElem);
+
+      playButton.setAttribute('onclick', "audioPlayOrPause('audio_"+ ind +"', "+totAudio+")");
+      audioref.setAttribute("onloadedmetadata","mDur('dur_"+ind+"', 'audio__"+ind+"')");
+      audioref.setAttribute("ontimeupdate","mPlay('dur_"+ind+"', 'audio__"+ind+"')");
+
+    });
+  }
+
+  function audioPlayOrPause(audioID, totElem){
+    audioElem = document.getElementById(audioID);
+    for (let index = 0; index < totElem; index++) {
+        if(audioID == 'audio_'+index){
+            if(audioElem.paused){
+                audioElem.play();
+            }else{
+                audioElem.pause();
+            }
+        }else{
+            document.getElementById('audio_'+index).pause();
+        }
+      }  
+  }
+
+  function mDur(dur, aud){
+    seekb = document.getElementById(dur);
+    audio = document.getElementById(aud);
+    seekb.max= audio.duration;
+  }
+  
+  function mPlay(dur, aud){
+    seekb = document.getElementById(dur);
+    audio = document.getElementById(aud);
+    seekb.value=audio.currentTime;
+  }
+  
+  function mSet(dur, aud){
+    seekb = document.getElementById(dur);
+    audio = document.getElementById(aud);
+    audio.currentTime=seekb.value;
+  }
+
+  
+  // .then(function(response) {
+  //     return response.json();
+  //     }).then(function(linkJson) {
+  //       document.getElementById('linkLabel').innerHTML += "<p>"+linkJson['Link']+"</p>";
+  //     });
+</script>
+ 
+</body>
+</html>

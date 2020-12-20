@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/css/uikit.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/js/uikit.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/uikit@3.5.10/dist/js/uikit-icons.min.js"></script>
+        <title>
+            audio crunker
+        </title>
+
+        <style>
+            #audioDesign{
+                display: none;
+            }
+
+            .audioButton{
+                width: 300px;
+                height: 300px;
+                border-radius: 50%;
+                background-color: rgb(44, 37, 37);
+                border: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <audio controls id="audio_0">
+            <source src="https://firebasestorage.googleapis.com/v0/b/ucd-waveaid-fakhruddin.appspot.com/o/audiobooks%2FRandom%2Fimg2.mp3?alt=media" type="audio/mpeg">
+        </audio>
+        <audio controls id="audio_1">
+            <source src="https://firebasestorage.googleapis.com/v0/b/ucd-waveaid-fakhruddin.appspot.com/o/audiobooks%2FRandom%2Fimg2.mp3?alt=media" type="audio/mpeg">
+        </audio>
+        <audio controls id="audio_2">
+            <source src="https://firebasestorage.googleapis.com/v0/b/ucd-waveaid-fakhruddin.appspot.com/o/audiobooks%2FRandom%2Fimg2.mp3?alt=media" type="audio/mpeg">
+        </audio>
+        <center>
+        <div class="uk-position-relative uk-visible-toggle uk-light" tabindex="-1" uk-slider="finite:true" style="width: 300px; margin-top: 120px;">
+
+            <ul class="uk-slider-items uk-child-width-1-1">
+                <li>
+                    <button class="audioButton" onclick="audioPlayOrPause('audio_0')"><span class="uk-margin-small-right" style="color: #0883ff;" uk-icon="icon:play-circle; ratio:3"></span></button>
+                </li>
+                <li>
+                    <button class="audioButton" onclick="audioPlayOrPause('audio_1')"><span class="uk-margin-small-right" style="color: #0883ff;" uk-icon="icon:play-circle; ratio:3"></span></button>
+                </li>
+                <li>
+                    <button class="audioButton" onclick="audioPlayOrPause('audio_2')"><span class="uk-margin-small-right" style="color: #0883ff;" uk-icon="icon:play-circle; ratio:3"></span></button>
+                </li>
+            </ul>
+        
+            <a class="uk-position-center-left uk-position-small uk-hidden-hover" href="#" uk-slidenav-previous uk-slider-item="previous"></a>
+            <a class="uk-position-center-right uk-position-small uk-hidden-hover" href="#" uk-slidenav-next uk-slider-item="next"></a>
+        
+        </div>
+    </center>
+
+    <script>
+        filearr = ['poem.jpg', 'img2.jpg'];
+        for (let index = 0; index < filearr.length; index++) {
+            console.log(filearr[index].split('.').slice(0, -1).join('.'));
+        }
+        bucketname = "images/Random"
+        console.log(bucketname.substr(7));
+
+        
+    </script>
+
+    </body>
+</html>
